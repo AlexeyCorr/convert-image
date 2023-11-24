@@ -12,8 +12,25 @@ const svgMin = () => {
     .pipe(dest('./dist/svg'))
 }
 
-const imageMin = () => {
-  return src(SOURCE)
+const pngImageMin = () => {
+  return src('./src/image/*.png')
+  .pipe(
+    squoosh({
+        oxipng: {
+          level: 2,
+        },
+      },
+      {
+        quant: {
+          numColors: 256
+        },
+      })
+  )
+  .pipe(dest(DESTINATION))
+}
+
+const jpgImageMin = () => {
+  return src('./src/image/*.jpg')
     .pipe(squoosh())
     .pipe(dest(DESTINATION))
 }
@@ -40,4 +57,4 @@ const toAvif = () => {
 
 const clean = () => del('./dist')
 
-exports.minify = series(clean, svgMin, imageMin, toWebp, toAvif)
+exports.minify = series(clean, svgMin, pngImageMin, jpgImageMin, toWebp, toAvif)
